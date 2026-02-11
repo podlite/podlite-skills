@@ -1,0 +1,17 @@
+{
+  "name": "podlite-skills",
+  "owner": {
+    "name": "Aliaksandr Zahatski"
+  },
+  "plugins": [
+    {
+      "name": "podlite",
+      "source": "./",
+      "description": "Agent Skills for Podlite markup language",
+      "version": "1.0.0",
+      "skills": [
+        "./skills/podlite-markup"
+      ]
+    }
+  ]
+}
