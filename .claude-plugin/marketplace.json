@@ -1,7 +1,9 @@
 {
   "name": "podlite-skills",
+  "repository": "https://github.com/podlite/podlite-skills",
   "owner": {
-    "name": "Aliaksandr Zahatski"
+    "name": "Aliaksandr Zahatski",
+    "url": "https://github.com/zag"
   },
   "plugins": [
     {

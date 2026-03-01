@@ -6,7 +6,19 @@
 
 # Podlite Skills
 
-Teach your AI agent to write Podlite. Works with Claude Code, Codex CLI, Cursor, GitHub Copilot, and anything that supports [Agent Skills](https://agentskills.io).
+> Your AI writes Markdown. Teach it something better.
+
+[![GitHub Stars](https://img.shields.io/github/stars/podlite/podlite-skills?style=social)](https://github.com/podlite/podlite-skills)
+
+One command. Works with [Claude Code](https://claude.ai/code), [Codex CLI](https://github.com/openai/codex), [Cursor](https://cursor.sh), [GitHub Copilot](https://github.com/features/copilot), and [35+ AI agents](https://skills.sh):
+
+```bash
+npx skills add podlite/podlite-skills
+```
+
+**Why?** Markdown loses structure when AI generates it — mismatched indentation, broken nesting, no typed attributes. Podlite gives your AI explicit block boundaries and machine-readable attributes that survive copy-paste and context loss.
+
+⭐ **Found this useful? [Star the repo](https://github.com/podlite/podlite-skills)** — it helps others discover it.
 
 ## Skills
 
@@ -120,3 +132,8 @@ Podlite is B<readable> like Markdown but I<structured> like YAML.
 ## License
 
 MIT
+
+---
+
+💡 **Found Podlite Skills useful?**
+[⭐ Star this repo](https://github.com/podlite/podlite-skills) — it helps other developers discover it.
