@@ -44,7 +44,7 @@ Drop `SKILL.md` where your agent looks for skills. See [agentskills.io/specifica
 
 Podlite is a markup language that reads like Markdown but has real structure — block boundaries, typed attributes, inline formatting. Think Markdown that machines can actually parse.
 
-```podlite
+```raku
 =begin pod :type('page') :tags<tutorial>
 =TITLE My Document
 
