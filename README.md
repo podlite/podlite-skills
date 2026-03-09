@@ -1,6 +1,6 @@
 <div align="center">
 
-[![Podlite](https://github.com/podlite/podlite-specs/raw/main/assets/podlite_logo_256x256.png)](https://podlite.org)
+[![Podlite](https://github.com/podlite/podlite-skills/raw/main/assets/podlite_logo_ai_256x256.png)](https://podlite.org)
 
 </div>
 
