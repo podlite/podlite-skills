@@ -4,7 +4,7 @@ description: Create and edit Podlite markup files. Use when working with .podlit
 license: MIT
 metadata:
   author: podlite
-  version: "1.0.0"
+  version: "2.0.0"
 ---
 
 # Podlite Markup
@@ -41,12 +41,14 @@ Title text
 | `=item1`/`=item2`/`=item3` | Nested lists (no level skip) | `=item2 Sub-point` |
 | `=code` | Code block (verbatim) | `=begin code :lang<js>` |
 | `=table` | Data table | `=begin table :caption('Title')` |
+| `=data-table` | Render CSV/TSV (inline, `:src<file:…>`, or `:src<data:…>`) | `=for data-table :src<file:./planets.csv>` |
 | `=comment` | Not rendered | `=begin comment` |
 | `=nested` | Indented/nested content | `=begin nested :notify<warning>` |
 | `=picture` | Image | `=picture diagram.png` |
 | `=defn` | Definition | `=defn Term` |
 | `=toc` | Table of contents | `=toc head1, head2` |
-| `=include` | Include file | `=include file:./other.podlite` |
+| `=include` | Include external content (directive) | `=include file:./other.podlite` |
+| `=boundary` | Structural section divider (chapters/parts) | `=boundary :caption<End of Part I>` |
 | `=formula` | Math formula | `=begin formula` |
 | `=input`/`=output` | Pre-formatted I/O | `=begin input` |
 
@@ -72,6 +74,7 @@ Title text
 | `D<>` | Definition | `D<term>` |
 | `V<>` | Verbatim | `V<no B<markup>>` |
 | `Z<>` | Zero-width comment | `Z<hidden note>` |
+| `G<>` | Guard (concealed in production output) | `G<sk-12345>` |
 | `E<>` | Entity/emoji | `E<0xA9>` `E<:smile:>` |
 | `L<>` | Link | `L<text\|https://url>` |
 
@@ -107,6 +110,11 @@ Attributes go on any block after the type name:
 | `:checked` / `:!checked` | Task list checkbox | `=item` |
 | `:notify<warning>` | Notification type (note/warning/info/error) | `=nested` |
 | `:folded` | Collapsed by default | Any block |
+| `:masked` | Conceal block content in production output (pairs with `G<>`) | Any block |
+| `:src<URI>` | Source: `file:`, `data:`, `http:`/`https:`, `doc:` | `=data-table`, `=include` |
+| `:columns<a,b>` | Ordered column projection (names or 1-based indices) | `=data-table` |
+| `:rename{k=>v}` | Display name overrides for projected columns | `=data-table` |
+| `:mime-type('text/csv; header=present')` | MIME type + RFC 6838 parameters; `header=present\|absent` for CSV/TSV | `=data`, `=data-table`, `=include` |
 
 ## Tables
 
@@ -133,12 +141,52 @@ Pre-set attributes for all blocks of a type:
 =config head1 :numbered
 ```
 
+## `=set` — attribute assignment to next block
+
+Like `=config`, but targets **a single block instance** rather than all blocks of a type. Two syntaxes — config-style and alias-style (multiline with inline markup).
+
+```podlite
+=set :caption('Quarterly revenue') :id<table-q1>
+=begin table
+...
+=end table
+```
+
+Alias syntax supports multiline values and inline formatting:
+
+```podlite
+=set :caption Selected B<chemical> elements with their
+=               L<atomic numbers|#elements> and symbols
+=begin table
+...
+=end table
+```
+
+Precedence: explicit block attributes > `=set` > `=config` defaults. Transparent to intervening directives (`=config`, `=alias`, `=include`, `=boundary`, `=comment`); applies to the **next non-directive block**. With `=include`, applies to the first block of the included content.
+
+## Content masking — `G<>` and `:masked`
+
+Marks content as **guarded** (concealed in published output, preserved in source/document model). Two render modes: production (default — masked) and draft (visible).
+
+```podlite
+The password is G<hunter2> and must not be exposed.
+
+=for para :masked
+This whole paragraph is masked in production output.
+```
+
+- Mask character: renderer-defined, default `█` (U+2588)
+- Guard propagates through `L<>`, `=include`, aliases, `data:` references
+- Not active in `=code` by default — enable with `:allow<G>`
+- **Not a security mechanism** — original text remains in source/VCS; use real encryption for secrets
+
 ## Rules
 
 - Indented text in `=pod`/`=item`/`=nested` becomes an implicit code block
 - Blank line separates paragraphs
 - `=item1` → `=item2` → `=item3` for nesting (sequential, no skipping levels)
 - Podlite natively supports Markdown: `.md` files are parsed in Markdown mode
+- Markdown fenced code blocks accept Podlite attributes after the language identifier — `` ```python :line-numbers :highlight<2,5-7> :caption<Example> ``
 
 ## Complete examples
 
@@ -201,6 +249,36 @@ function hello() {
 B<Breaking change in v2.0:> Configuration migrated from YAML to Podlite.
 Run C<podlite-migrate> before upgrading.
 =end nested
+```
+
+### CSV rendering with `=data-table`
+
+```podlite
+=for data-table :src<file:./planets.csv>
+=               :columns<name,radius_km,moons>
+=               :rename{radius_km=>'Radius (km)'}
+=               :caption('Inner planets')
+```
+
+Inline body form:
+
+```podlite
+=begin data-table :mime-type('text/csv; header=present')
+name,age,city
+Alice,30,London
+Bob,25,Paris
+=end data-table
+```
+
+Or referencing a `=data` block by key:
+
+```podlite
+=begin data :key<sales> :mime-type('text/csv; header=present')
+quarter,region,revenue
+Q1,EU,120
+=end data
+
+=for data-table :src<data:sales> :columns<quarter,revenue>
 ```
 
 ### Structured idea (IdeaLab format)
