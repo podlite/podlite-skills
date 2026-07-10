@@ -12,7 +12,8 @@
       "description": "Agent Skills for Podlite markup language",
       "version": "1.0.0",
       "skills": [
-        "./skills/podlite-markup"
+        "./skills/podlite-markup",
+        "./skills/podlite-verify"
       ]
     }
   ]
