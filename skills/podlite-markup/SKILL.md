@@ -96,8 +96,13 @@ Attributes go on any block after the type name:
 :key('value with spaces')  quoted string
 :key(42)                   number
 :key('a','b')              list, comma-separated
-:key{a=>1, b=>'x'}         map
+:key{:a<x>, :b(42), :c}    map, option form (`:c` alone is true, `:!c` is false)
+:key{a=>1, b=>'x'}         map, arrow form
+:key<>  :key()             empty list
+:key{}                     empty map
 ```
+
+A single word in `<…>` keeps its text: `:key<1>` is the string `1`, `:key<True>` is the string `True`. A number needs `:key(42)`, a boolean needs `:key` or `:key(True)`.
 
 **Common attributes:**
 
@@ -193,6 +198,9 @@ This whole paragraph is masked in production output.
 - Guillemets are not quotation marks — `:caption<«Q1 sales»>` keeps the brackets inside the value; quote with `'…'`
 - Inside `(…)` and `{…}` every string is quoted; a bare word is not a valid element, apart from `True` and `False`
 - Square brackets are not a value form — a list is written `<a b>` or `('a','b')`, never `:key[a,b]`
+- Attributes continue on a line starting with `=` in the first column and a space; a line starting with spaces is block content, and the attributes written on it are lost
+- A value in `(…)` or `{…}` may continue on such a line; a value in `<…>` or in quotes ends with its line
+- A value that cannot be read is dropped together with its attribute, the block itself parses on, and the parser reports the position
 
 ## Complete examples
 

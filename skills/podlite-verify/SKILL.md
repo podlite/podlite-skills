@@ -42,6 +42,7 @@ Read the produced markup and confirm each invariant. These are the errors LLMs i
 | 11 | **Block casing matches role**: lowercase standard (`=head1`), UPPERCASE semantic (`=TITLE`), MixedCase custom (`=Image`) | `=image`, `=title` | `=Image`, `=TITLE` |
 | 12 | **`=end` lines carry no attributes**: attributes belong on `=begin` only | `=end code :lang<js>` | `=end code` |
 | 13 | **Markdown-fence attributes follow the language id** | ` ```:line-numbers python ` | ` ```python :line-numbers ` |
+| 14 | **A continued attribute line starts with `=` and a space**: an indented one is content, and its attributes are lost | `=begin pod :type<x>`⏎`  :id<y>` | `=begin pod :type<x>`⏎`=  :id<y>` |
 
 ### The nested-angle trap (most common, most silent)
 
@@ -61,7 +62,7 @@ Rule: if an attribute value contains `<`, `>`, or inline formatting codes, use t
 
 If Podlite tooling is present, parse the source. A failed parse or a reported problem means the markup is invalid; a clean parse (empty problem list, exit 0) is the bar.
 
-**CLI (canonical):** the lint subcommand reports structural and syntax problems; the rule set is growing. Check #5 has a dedicated `attr-nested-angle` rule (error) for a nested `<…>` pair or formatting code inside an angle-delimited value; a bare single `>` surfaces through `syntax-valid` instead.
+**CLI (canonical):** the lint subcommand reports structural and syntax problems; the rule set is growing. Check #5 has a dedicated `attr-nested-angle` rule (error): it reports both a nested `<…>` pair and a bare `>` that closes an angle-delimited value early. An attribute the parser had to drop surfaces through `attr-value-dropped` (warning), and one written on an indented continuation line through `attr-continuation-dropped` (warning).
 
 ```bash
 podlite lint --format json --strict path/to/file.podlite
