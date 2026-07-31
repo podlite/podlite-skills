@@ -48,7 +48,7 @@ Title text
 | `=defn` | Definition | `=defn Term` |
 | `=toc` | Table of contents | `=toc head1, head2` |
 | `=include` | Include external content (directive) | `=include file:./other.podlite` |
-| `=boundary` | Structural section divider (chapters/parts) | `=boundary :caption<End of Part I>` |
+| `=boundary` | Structural section divider (chapters/parts) | `=boundary :caption('End of Part I')` |
 | `=formula` | Math formula | `=begin formula` |
 | `=input`/`=output` | Pre-formatted I/O | `=begin input` |
 
@@ -92,9 +92,11 @@ Attributes go on any block after the type name:
 :key                       boolean true
 :!key                      boolean false
 :key<value>                string
-:key<val1 val2>            list (space-separated)
+:key<val1 val2>            list of words (spaces separate, commas do not)
 :key('value with spaces')  quoted string
 :key(42)                   number
+:key('a','b')              list, comma-separated
+:key{a=>1, b=>'x'}         map
 ```
 
 **Common attributes:**
@@ -105,15 +107,15 @@ Attributes go on any block after the type name:
 | `:caption('Title')` | Caption | `=table`, `=picture` |
 | `:lang<python>` | Programming language | `=code` |
 | `:allow<B I E>` | Allow markup in verbatim | `=code` |
-| `:tags<t1,t2>` | Categorization tags | `=para`, `=pod` |
+| `:tags<t1 t2>` | Categorization tags | `=para`, `=pod` |
 | `:numbered` | Ordered list/heading | `=item`, `=head` |
 | `:checked` / `:!checked` | Task list checkbox | `=item` |
 | `:notify<warning>` | Notification type (note/warning/info/error) | `=nested` |
 | `:folded` | Collapsed by default | Any block |
 | `:masked` | Conceal block content in production output (pairs with `G<>`) | Any block |
 | `:src<URI>` | Source: `file:`, `data:`, `http:`/`https:`, `doc:` | `=data-table`, `=include` |
-| `:columns<a,b>` | Ordered column projection (names or 1-based indices) | `=data-table` |
-| `:rename{k=>v}` | Display name overrides for projected columns | `=data-table` |
+| `:columns<a b>` | Ordered column projection (names or 1-based indices) | `=data-table` |
+| `:rename{k=>'v'}` | Display name overrides for projected columns | `=data-table` |
 | `:mime-type('text/csv; header=present')` | MIME type + RFC 6838 parameters; `header=present\|absent` for CSV/TSV | `=data`, `=data-table`, `=include` |
 
 ## Tables
@@ -186,7 +188,11 @@ This whole paragraph is masked in production output.
 - Blank line separates paragraphs
 - `=item1` → `=item2` → `=item3` for nesting (sequential, no skipping levels)
 - Podlite natively supports Markdown: `.md` files are parsed in Markdown mode
-- Markdown fenced code blocks accept Podlite attributes after the language identifier — `` ```python :line-numbers :highlight<2,5-7> :caption<Example> ``
+- Markdown fenced code blocks accept Podlite attributes after the language identifier — `` ```python :line-numbers :highlight(2,'5-7') :caption<Example> ``
+- A comma inside `<…>` is part of the value, not a separator — `:tags<a,b>` is the string `a,b`; a list needs spaces
+- Guillemets are not quotation marks — `:caption<«Q1 sales»>` keeps the brackets inside the value; quote with `'…'`
+- Inside `(…)` and `{…}` every string is quoted; a bare word is not a valid element, apart from `True` and `False`
+- Square brackets are not a value form — a list is written `<a b>` or `('a','b')`, never `:key[a,b]`
 
 ## Complete examples
 
