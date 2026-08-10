@@ -77,6 +77,13 @@ Title text
 | `G<>` | Guard (concealed in production output) | `G<sk-12345>` |
 | `E<>` | Entity/emoji | `E<0xA9>` `E<:smile:>` |
 | `L<>` | Link | `L<text\|https://url>` |
+| `W<>` | Contextual backlink | `W<term\|defn:term>` |
+| `X<>` | Index entry | `X<text\|entry,subentry>` |
+| `P<>` | Inline picture | `P<file:./chart.png>` |
+| `F<>` | Mathematical formula | `F<x^2 + y^2>` |
+| `M<>` | Module-defined code | `M<scheme:contents>` |
+| `A<>` | Macro or object contents | `A<macro-name>` |
+| `S<>` | Preserved spaces | `S<keep   these>` |
 
 **Links:** `L<text|https://url>` `L<text|file:./path>` `L<text|#section-id>` `L<#id>`
 
@@ -109,7 +116,7 @@ A single word in `<…>` keeps its text: `:key<1>` is the string `1`, `:key<True
 | Attribute | Purpose | Used with |
 |-----------|---------|-----------|
 | `:id<ID>` | Block identifier for linking | Any block |
-| `:caption('Title')` | Caption | `=table`, `=picture` |
+| `:caption('Title')` | Title for the block | any block |
 | `:lang<python>` | Programming language | `=code` |
 | `:allow<B I E>` | Allow markup in verbatim | `=code` |
 | `:tags<t1 t2>` | Categorization tags | `=para`, `=pod` |
@@ -269,7 +276,7 @@ Run C<podlite-migrate> before upgrading.
 
 ```podlite
 =for data-table :src<file:./planets.csv>
-=               :columns<name,radius_km,moons>
+=               :columns<name radius_km moons>
 =               :rename{radius_km=>'Radius (km)'}
 =               :caption('Inner planets')
 ```
@@ -292,7 +299,7 @@ quarter,region,revenue
 Q1,EU,120
 =end data
 
-=for data-table :src<data:sales> :columns<quarter,revenue>
+=for data-table :src<data:sales> :columns<quarter revenue>
 ```
 
 ### Structured idea (IdeaLab format)

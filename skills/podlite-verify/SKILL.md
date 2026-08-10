@@ -43,6 +43,10 @@ Read the produced markup and confirm each invariant. These are the errors LLMs i
 | 12 | **`=end` lines carry no attributes**: attributes belong on `=begin` only | `=end code :lang<js>` | `=end code` |
 | 13 | **Markdown-fence attributes follow the language id** | ` ```:line-numbers python ` | ` ```python :line-numbers ` |
 | 14 | **A continued attribute line starts with `=` and a space**: an indented one is content, and its attributes are lost | `=begin pod :type<x>`⏎`  :id<y>` | `=begin pod :type<x>`⏎`=  :id<y>` |
+| 15 | **A list value separates on spaces, not commas**: a comma stays inside the value | `:columns<a,b,c>` is one name | `:columns<a b c>` or `:columns('a','b','c')` |
+| 16 | **`=set` applies to the next block only**: it needs a block after it in the same scope | `=set` at end of document | `=set :caption('X')` followed by the block |
+| 17 | **`G<>` conceals, it does not delete**: guarded text stays in the source and reaches anyone who reads the file | secrets inside `G<>` | secrets outside the document |
+| 18 | **`:mime-type` carries its parameters**: CSV and TSV need the header state | `:mime-type<text/csv>` | `:mime-type<'text/csv; header=present'>` |
 
 ### The nested-angle trap (most common, most silent)
 
