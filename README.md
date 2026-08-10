@@ -18,11 +18,11 @@ npx skills add podlite/podlite-skills
 
 ## Why
 
-Markdown has **no single spec-defined canonical AST** — CommonMark deliberately defines none. So two parsers can disagree on the tree, and typed attributes have nowhere to live. When an agent regenerates a document between sessions, a dropped block boundary or broken nesting becomes a *silent* diff you only notice later.
+CommonMark specifies how Markdown is parsed, but its conformance tests compare HTML output, not trees. Each parser builds its own tree format, and there is no syntax for typed attributes. When an agent regenerates a document between sessions, a dropped block boundary or broken nesting becomes a *silent* diff you only notice later.
 
-Podlite ships **one canonical grammar and one AST**, so that class of breakage surfaces as a line-located error instead of vanishing into a re-render.
+Podlite has one specification and one reference parser, [`@podlite/schema`](https://www.npmjs.com/package/@podlite/schema). Every tool built on it sees the same tree, and `podlite lint` reports this kind of breakage with a line number instead of letting it vanish into a re-render.
 
-This is *not* "a markup with a real parser" — `remark`/`mdast` is a real typed AST too. The difference is **one** canonical, spec-defined tree with stable block boundaries and typed attributes — not a tree your toolchain happens to pick.
+This is *not* "a markup with a real parser". `remark`/`mdast` is a real typed AST too. The difference is one tree shared by every tool, with stable block boundaries and typed attributes, instead of a tree your toolchain happens to pick.
 
 Honest trade: Markdown wins on ubiquity and tooling. Podlite wins when structure has to **survive regeneration** by an agent.
 
@@ -35,7 +35,7 @@ npm i @podlite/schema
 node -e "const {parse}=require('@podlite/schema'); console.dir(parse('=head1 Hello World'), {depth:5})"
 ```
 
-Every node comes back with its `type`, `name`, `level`, and a `location: { line, column }`. That's the whole point: a structural break points at a line, it doesn't disappear.
+Each block comes back with its `type` and a `location: { line, column }`. A heading also carries its `name` and `level`. A structural break points at a line instead of disappearing.
 
 Convert back out with `toHtml` (full-fidelity) or `toMarkdown` (**best-effort** — typed attributes have no Markdown equivalent, so that structure is intentionally dropped; characterized, not silent).
 
@@ -89,10 +89,10 @@ Podlite is B<readable> like Markdown but I<structured> with typed attributes.
 =item Inline formatting: B<bold>, I<italic>, C<code>, L<links|https://podlite.org>
 
 =begin table :caption('Trade-offs, not a clean sweep')
-  Format   | Ubiquity | Canonical AST
+  Format   | Ubiquity | Tree format
   ---------|----------|--------------------
-  Markdown | +++      | none (by design)
-  Podlite  | +        | one, spec-defined
+  Markdown | +++      | one per parser
+  Podlite  | +        | one for all tools
 =end table
 
 =end pod

@@ -64,7 +64,7 @@ Rule: if an attribute value contains `<`, `>`, or inline formatting codes, use t
 
 ## Layer 2: machine validation (when tooling is available)
 
-If Podlite tooling is present, parse the source. A failed parse or a reported problem means the markup is invalid; a clean parse (empty problem list, exit 0) is the bar.
+If Podlite tooling is present, parse the source. A failed parse or a reported problem means the markup is invalid. A clean run (empty problem list, exit 0) means the tools found nothing. It does not cover every Layer 1 rule: a skipped list level, for example, passes the linter. Keep the self-check.
 
 **CLI (canonical):** the lint subcommand reports structural and syntax problems; the rule set is growing. Check #5 has a dedicated `attr-nested-angle` rule (error): it reports both a nested `<…>` pair and a bare `>` that closes an angle-delimited value early. An attribute the parser had to drop surfaces through `attr-value-dropped` (warning), and one written on an indented continuation line through `attr-continuation-dropped` (warning).
 
