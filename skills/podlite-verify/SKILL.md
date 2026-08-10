@@ -31,9 +31,9 @@ Read the produced markup and confirm each invariant. These are the errors LLMs i
 |---|-------|-------|-------|
 | 1 | **Every `=begin X` has a matching `=end X`** with the same typename | `=begin code … =end pod` | `=begin code … =end code` |
 | 2 | **Balanced block nesting**: inner blocks close before outer | `=begin pod =begin code =end pod` | `=begin pod =begin code =end code =end pod` |
-| 3 | **List levels are sequential**: no skipping | `=item1` → `=item3` | `=item1` → `=item2` → `=item3` |
-| 4 | **Attribute values with spaces are quoted** | `:caption<Q1 sales>` | `:caption('Q1 sales')` or `:caption("Q1 sales")` |
-| 5 | **No raw `<`/`>` inside `:attr<…>`**: an inner `>` closes the attribute early | `:caption<See L<x\|y>>` | `:caption('See L<x\|y>')` |
+| 3 | **No skipped list levels**: an `=item3` needs an `=item2` earlier in the same block, and parsers warn otherwise | `=item1` → `=item3` | `=item1` → `=item2` → `=item3` |
+| 4 | **If several words must form one string, quote them**: unquoted words in `<…>` make a list | `:caption<Q1 sales>` | `:caption<'Q1 sales'>` or `:caption('Q1 sales')` |
+| 5 | **No raw `<`/`>` inside an unquoted `:attr<…>`**: the parser ends the value at the first `>` | `:caption<See L<x\|y>>` | `:caption('See L<x\|y>')` |
 | 6 | **Formatting codes are balanced** | `B<bold I<italic>` | `B<bold I<italic>>` |
 | 7 | **Content containing `>` uses doubled delimiters** | `C<$x > 5>` | `C<< $x > 5 >>` or `C« $x > 5 »` |
 | 8 | **Blank line separates paragraphs / terminates `=for` and abbreviated blocks** | two paragraphs glued | blank line between |
@@ -50,7 +50,7 @@ Read the produced markup and confirm each invariant. These are the errors LLMs i
 
 ### The nested-angle trap (most common, most silent)
 
-The single most frequent break: a `>` inside an angle-bracket attribute value. The parser closes `:key<…>` at the **first** `>`, so the rest leaks into the render and metadata is corrupted.
+The single most frequent break: a `>` inside an unquoted angle-bracket attribute value. The parser closes an unquoted `:key<…>` at the **first** `>`, so the rest leaks into the render and metadata is corrupted.
 
 ```
 WRONG:  =for data-table :caption<Revenue > 100>
@@ -60,7 +60,7 @@ WRONG:  :content-snippet<See B<bold> note>
 RIGHT:  :content-snippet('See bold note')      # strip inner codes, or quote
 ```
 
-Rule: if an attribute value contains `<`, `>`, or inline formatting codes, use the **parenthesised-quote form** `:key('…')`.
+Rule: if an attribute value contains `<`, `>`, or inline formatting codes, quote it. Prefer `:key('…')`. The form `:key<'…'>` is also valid Podlite and reads as the same string, but on some blocks the linter currently reports a false `attr-nested-angle` error on it.
 
 ## Layer 2: machine validation (when tooling is available)
 

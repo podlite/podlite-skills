@@ -101,6 +101,7 @@ Attributes go on any block after the type name:
 :key<value>                string
 :key<val1 val2>            list of words (spaces separate, commas do not)
 :key('value with spaces')  quoted string
+:key<'value with spaces'>  quoted string in angle brackets
 :key(42)                   number
 :key('a','b')              list, comma-separated
 :key{:a<x>, :b(42), :c}    map, option form (`:c` alone is true, `:!c` is false)
@@ -198,7 +199,7 @@ This whole paragraph is masked in production output.
 
 - Indented text in `=pod`/`=item`/`=nested` becomes an implicit code block
 - Blank line separates paragraphs
-- `=item1` → `=item2` → `=item3` for nesting (sequential, no skipping levels)
+- `=item1` → `=item2` → `=item3` for nesting: an `=item3` needs an `=item2` earlier in the same block
 - Podlite natively supports Markdown: `.md` files are parsed in Markdown mode
 - Markdown fenced code blocks accept Podlite attributes after the language identifier — `` ```python :line-numbers :highlight(2,'5-7') :caption<Example> ``
 - A comma inside `<…>` is part of the value, not a separator — `:tags<a,b>` is the string `a,b`; a list needs spaces
