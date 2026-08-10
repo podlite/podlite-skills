@@ -66,7 +66,7 @@ Rule: if an attribute value contains `<`, `>`, or inline formatting codes, use t
 
 If Podlite tooling is present, parse the source. A failed parse or a reported problem means the markup is invalid. A clean run (empty problem list, exit 0) means the tools found nothing. It does not cover every Layer 1 rule: a skipped list level, for example, passes the linter. Keep the self-check.
 
-**CLI (canonical):** the lint subcommand reports structural and syntax problems; the rule set is growing. Check #5 has a dedicated `attr-nested-angle` rule (error): it reports both a nested `<…>` pair and a bare `>` that closes an angle-delimited value early. An attribute the parser had to drop surfaces through `attr-value-dropped` (warning), and one written on an indented continuation line through `attr-continuation-dropped` (warning).
+**CLI (canonical):** the lint subcommand reports structural and syntax problems; the rule set is growing. Check #5 has a dedicated `attr-nested-angle` rule (error): it reports both a nested `<…>` pair and a bare `>` that closes an angle-delimited value early. It does not check the `=begin` line of `code`, `table` and `data` blocks yet. There a broken attribute shows up only as `syntax-valid` warnings on that block's `=begin` and `=end` lines, so read those warnings as rule #5 and check the `=begin` line by hand. An attribute the parser had to drop surfaces through `attr-value-dropped` (warning), and one written on an indented continuation line through `attr-continuation-dropped` (warning).
 
 ```bash
 podlite lint --format json --strict path/to/file.podlite
@@ -82,7 +82,7 @@ If no tool is available, do not claim validation ran. Report that only the Layer
 
 1. **Self-check** the output against Layer-1 rules; fix every violation found.
 2. **Machine-validate** with `podlite lint` (or `@podlite/schema` `parse`) if available.
-3. **Read the reported errors**: fix the first error first; cascading errors often resolve together.
+3. **Read the reported errors**: fix the first error first; cascading errors often resolve together. Several `syntax-valid` warnings can come from one broken line, so find that line before dismissing them.
 4. **Re-validate** until the parse is clean (zero problems).
 5. **Round-trip check** (optional): render via pod6.in or `@podlite/to-jsx` and confirm the structure matches intent: headings nest correctly, tables have the right columns, no stray text from a swallowed attribute.
 6. **Report honestly**: state which layers ran ("self-check + schema validation: clean" vs "self-check only, no parser available").
