@@ -10,7 +10,7 @@
       "name": "podlite",
       "source": "./",
       "description": "Agent Skills for Podlite markup language",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "skills": [
         "./skills/podlite-markup",
         "./skills/podlite-verify"
