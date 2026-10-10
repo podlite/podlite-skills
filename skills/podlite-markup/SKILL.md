@@ -43,7 +43,7 @@ Title text
 | `=table` | Data table | `=begin table :caption('Title')` |
 | `=data-table` | Render CSV/TSV (inline, `:src<file:…>`, or `:src<data:…>`) | `=for data-table :src<file:./planets.csv>` |
 | `=comment` | Not rendered | `=begin comment` |
-| `=nested` | Indented/nested content | `=begin nested :notify<warning>` |
+| `=nested` | Indented/nested content | `=begin nested :notice<warning>` |
 | `=picture` | Image | `=picture diagram.png` |
 | `=defn` | Definition | `=defn Term` |
 | `=toc` | Table of contents | `=toc head1, head2` |
@@ -123,7 +123,7 @@ A single word in `<…>` keeps its text: `:key<1>` is the string `1`, `:key<True
 | `:tags<t1 t2>` | Categorization tags | `=para`, `=pod` |
 | `:numbered` | Ordered list/heading | `=item`, `=head` |
 | `:checked` / `:!checked` | Task list checkbox | `=item` |
-| `:notify<warning>` | Notification type (note/warning/info/error) | `=nested` |
+| `:notice<warning>` | Notification type (note/tip/important/warning/caution) | `=nested` |
 | `:folded` | Collapsed by default | Any block |
 | `:masked` | Conceal block content in production output (pairs with `G<>`) | Any block |
 | `:src<URI>` | Source: `file:`, `data:`, `http:`/`https:`, `doc:` | `=data-table`, `=include` |
@@ -267,7 +267,7 @@ function hello() {
 =item :!checked Configure C<.env> file
 =item :!checked Run C<npm test>
 
-=begin nested :notify<warning>
+=begin nested :notice<warning>
 B<Breaking change in v2.0:> Configuration migrated from YAML to Podlite.
 Run C<podlite-migrate> before upgrading.
 =end nested
