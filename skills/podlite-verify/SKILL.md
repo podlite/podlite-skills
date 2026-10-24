@@ -37,9 +37,9 @@ Read the produced markup and confirm each invariant. These are the errors LLMs i
 | 6 | **Formatting codes are balanced** | `B<bold I<italic>` | `B<bold I<italic>>` |
 | 7 | **Content containing `>` uses doubled delimiters** | `C<$x > 5>` | `C<< $x > 5 >>` or `C« $x > 5 »` |
 | 8 | **Blank line separates paragraphs / terminates `=for` and abbreviated blocks** | two paragraphs glued | blank line between |
-| 9 | **Full documents have a `=begin pod … =end pod` root** (or a top-level `=begin pod`) | content with no root | wrapped in `=pod` |
+| 9 | **A `=begin pod … =end pod` root is optional**: the specification wraps a `.podlite` file in one implicitly | requiring a root | with or without a root |
 | 10 | **Indentation is intentional**: indented text inside `=pod`/`=item`/`=nested` becomes an implicit code block | accidental 4-space indent | flush-left prose |
-| 11 | **Block casing matches role**: lowercase standard (`=head1`), UPPERCASE semantic (`=TITLE`), MixedCase custom (`=Image`) | `=image`, `=title` | `=Image`, `=TITLE` |
+| 11 | **Block casing matches role**: lowercase standard (`=head1`), UPPERCASE semantic (`=TITLE`), MixedCase custom (`=Mermaid`) | `=mermaid`, `=title`, `=Image` | `=Mermaid`, `=TITLE`, `=picture` |
 | 12 | **`=end` lines carry no attributes**: attributes belong on `=begin` only | `=end code :lang<js>` | `=end code` |
 | 13 | **Markdown-fence attributes follow the language id** | ` ```:line-numbers python ` | ` ```python :line-numbers ` |
 | 14 | **A continued attribute line starts with `=` and a space**: an indented one is content, and its attributes are lost | `=begin pod :type<x>`⏎`  :id<y>` | `=begin pod :type<x>`⏎`=  :id<y>` |
@@ -60,13 +60,13 @@ WRONG:  :content-snippet<See B<bold> note>
 RIGHT:  :content-snippet('See bold note')      # strip inner codes, or quote
 ```
 
-Rule: if an attribute value contains `<`, `>`, or inline formatting codes, quote it. Prefer `:key('…')`. The form `:key<'…'>` is also valid Podlite and reads as the same string, but on some blocks the linter currently reports a false `attr-nested-angle` error on it.
+Rule: if an attribute value contains `<`, `>`, or inline formatting codes, quote it. Prefer `:key('…')`. For attribute values containing angle brackets, use `:key('…')`.
 
 ## Layer 2: machine validation (when tooling is available)
 
-If Podlite tooling is present, parse the source. A failed parse or a reported problem means the markup is invalid. A clean run (empty problem list, exit 0) means the tools found nothing. It does not cover every Layer 1 rule: a skipped list level, for example, passes the linter. Keep the self-check.
+If Podlite tooling is present, parse the source. A failed parse or a reported problem means the markup is invalid. A clean run (empty problem list, exit 0) means the tools found nothing. Check list levels against the specification before delivery.
 
-**CLI (canonical):** the lint subcommand reports structural and syntax problems; the rule set is growing. Check #5 has a dedicated `attr-nested-angle` rule (error): it reports both a nested `<…>` pair and a bare `>` that closes an angle-delimited value early. It does not check the `=begin` line of `code`, `table` and `data` blocks yet. There a broken attribute shows up only as `syntax-valid` warnings on that block's `=begin` and `=end` lines, so read those warnings as rule #5 and check the `=begin` line by hand. An attribute the parser had to drop surfaces through `attr-value-dropped` (warning), and one written on an indented continuation line through `attr-continuation-dropped` (warning).
+**CLI (canonical):** the lint subcommand reports structural and syntax problems. Check #5 has a dedicated `attr-nested-angle` rule (error): it reports both a nested `<…>` pair and a bare `>` that closes an angle-delimited value early. On the `=begin` line of `code`, `table` and `data` blocks a broken attribute shows up as `syntax-valid` warnings on that block's `=begin` and `=end` lines; read those warnings as rule #5 and check the `=begin` line by hand. An attribute the parser had to drop surfaces through `attr-value-dropped` (warning), and one written on an indented continuation line through `attr-continuation-dropped` (warning).
 
 ```bash
 podlite lint --format json --strict path/to/file.podlite

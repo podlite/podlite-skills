@@ -12,7 +12,7 @@ metadata:
 Podlite is a lightweight markup language for documentation, knowledge bases, and structured content. It extends Markdown concepts with explicit block boundaries, typed attributes, and rich inline formatting.
 
 - **Extension:** `.podlite`
-- **Document root:** `=begin pod ... =end pod`
+- **Document root:** optional; the specification wraps a `.podlite` file in `=pod` implicitly
 - **Every directive** starts with `=` as first non-whitespace on its line
 - **Full specification:** https://podlite.org/specification
 
@@ -54,7 +54,7 @@ Title text
 
 **Semantic blocks** (UPPERCASE): `=TITLE`, `=DESCRIPTION`, `=AUTHOR`, `=VERSION`, `=CHANGES`, `=TODO`
 
-**Custom blocks** (mixed-case): `=Image`, `=Diagram`, `=Mermaid`, `=Markdown`
+**Custom blocks** (mixed-case): `=Diagram`, `=Mermaid`, `=Markdown`. Images use `=picture`.
 
 ## Inline formatting codes
 
