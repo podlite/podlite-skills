@@ -6,11 +6,9 @@
 
 # Podlite Skills
 
-> One grammar, one AST. Your Markdown parses in unchanged — and when something regenerates the doc, the break Markdown swallows silently becomes a **line-located error**, equally legible to a person and to an agent.
+> Teach your agent to write Podlite, then check it with the parser.
 
-[![GitHub Stars](https://img.shields.io/github/stars/podlite/podlite-skills?style=social)](https://github.com/podlite/podlite-skills)
-
-Works with [Claude Code](https://claude.ai/code), [Codex CLI](https://github.com/openai/codex), [Cursor](https://cursor.sh), [GitHub Copilot](https://github.com/features/copilot), and [35+ agents](https://skills.sh):
+Install for your agent; [skills.sh](https://skills.sh) lists the agents its installer supports:
 
 ```bash
 npx skills add podlite/podlite-skills
@@ -22,22 +20,36 @@ CommonMark specifies how Markdown is parsed, but its conformance tests compare H
 
 Podlite has one specification and one reference parser, [`@podlite/schema`](https://www.npmjs.com/package/@podlite/schema). Every tool built on it sees the same tree, and `podlite lint` reports this kind of breakage with a line number instead of letting it vanish into a re-render.
 
-This is *not* "a markup with a real parser". `remark`/`mdast` is a real typed AST too. The difference is one tree shared by every tool, with stable block boundaries and typed attributes, instead of a tree your toolchain happens to pick.
-
-Honest trade: Markdown wins on ubiquity and tooling. Podlite wins when structure has to **survive regeneration** by an agent.
-
 ## See it (runnable, ~10s)
 
-Don't take the claim — run the parser on your own machine:
+Run the parser:
 
 ```bash
 npm i @podlite/schema
 node -e "const {parse}=require('@podlite/schema'); console.dir(parse('=head1 Hello World'), {depth:5})"
 ```
 
-Each block comes back with its `type` and a `location: { line, column }`. A heading also carries its `name` and `level`. A structural break points at a line instead of disappearing.
+Each block comes back with its `type`, `location.start` and `location.end`. A heading also carries its `name` and `level`.
 
-Convert back out with `toHtml` (full-fidelity) or `toMarkdown` (**best-effort** — typed attributes have no Markdown equivalent, so that structure is intentionally dropped; characterized, not silent).
+Convert back out with `toHtml` (full-fidelity) or `toMarkdown`. `toMarkdown` writes Markdown. Attributes without a Markdown form, such as `:status<draft>`, are left out; a code block keeps its language.
+
+## Check that your agent calls the parser
+
+Paste this into your agent:
+
+```
+Use the podlite MCP server to parse the document below. Tell me, for every
+block: its type, its level if it has one, and the line it starts on. Name the
+tool you called.
+
+=head1 Setup
+
+Install the thing.
+
+=head2 Windows
+```
+
+The parser answers: `head` at line 1, level 1; a paragraph at line 3; `head` at line 5, level 2. The MCP server setup is on [podlite.org/for-agents](https://podlite.org/for-agents).
 
 ## Skills
 
@@ -50,7 +62,7 @@ Convert back out with `toHtml` (full-fidelity) or `toMarkdown` (**best-effort** 
 
 ### skills.sh (recommended)
 
-One command, [35+ agents](https://skills.sh):
+One command; [skills.sh](https://skills.sh) lists the agents its installer supports:
 
 ```bash
 npx skills add podlite/podlite-skills
@@ -87,13 +99,6 @@ Podlite is B<readable> like Markdown but I<structured> with typed attributes.
 =item Human-friendly syntax
 =item Machine-parseable attributes with C<:key<value>>
 =item Inline formatting: B<bold>, I<italic>, C<code>, L<links|https://podlite.org>
-
-=begin table :caption('Trade-offs, not a clean sweep')
-  Format   | Ubiquity | Tree format
-  ---------|----------|--------------------
-  Markdown | +++      | one per parser
-  Podlite  | +        | one for all tools
-=end table
 
 =end pod
 ```
