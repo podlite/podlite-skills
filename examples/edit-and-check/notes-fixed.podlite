@@ -1,0 +1,22 @@
+=head1 Release notes
+
+=head2 Install
+
+=begin code :lang<bash>
+npm install example
+=end code
+
+=head2 Versions
+
+=begin table
+Version | Date
+0.2     | 2026-10-20
+0.1     | 2026-10-01
+=end table
+
+=head2 Usage
+
+=begin code :lang<python>
+import example
+example.run()
+=end code

@@ -51,6 +51,10 @@ Install the thing.
 
 The parser answers: `head` at line 1, level 1; a paragraph at line 3; `head` at line 5, level 2. The MCP server setup is on [podlite.org/for-agents](https://podlite.org/for-agents).
 
+## Edit, then check
+
+An agent leaves a table open; `podlite lint` reports the line and exits with code 1; after the fix, `podlite query` selects a block by name and attribute. Files, commands and real output: [examples/edit-and-check](examples/edit-and-check/).
+
 ## Skills
 
 | Skill | Description |
